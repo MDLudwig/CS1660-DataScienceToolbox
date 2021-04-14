@@ -22,3 +22,7 @@ Orange:
 
 Video:
 * https://drive.google.com/file/d/1oIUt01ytR5w8omH3UU6JYyxTQJTiswys/view?usp=sharing
+
+Unimplemented:
+* Spyder
+
