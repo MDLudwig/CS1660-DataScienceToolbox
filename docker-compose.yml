@@ -1,0 +1,139 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    container_name: toolbox
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    environment:
+      FLASK_ENV: development
+    logging:
+      driver: "none"
+    depends_on: 
+      - "redis"
+      - "jupyter"
+      - "git"
+      - "rstudio"
+      - "markdown"
+      - "sonarqube"
+      - "sonarscan"
+      - "tensorflow"
+      - "vscode"
+      - "orange"
+      - "spark"
+      - "hadoop"
+  redis:
+    image: "redis:alpine"
+    logging:
+      driver: "none"
+  jupyter:
+    image: "jupyter/base-notebook"
+    container_name: jupyter-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/code
+    environment:
+      - JUPYTER_TOKEN=test
+    logging:
+      driver: "none"
+  git:
+    image: "ludwigmd/cs1660git:wetty6"
+    container_name: git
+    ports:
+      - "3000:3000"
+    logging:
+      driver: "none"
+  rstudio:
+    image: "rocker/rstudio"
+    container_name: rstudio
+    ports:
+      - "8787:8787"
+    environment:
+      - DISABLE_AUTH=true
+    logging:
+      driver: "none"
+  markdown:
+    image: "v4tech/markdown-editor"
+    container_name: markdown
+    ports:
+      - "12345:80"
+    logging:
+      driver: "none"
+  sonarqube:
+    image: "sonarqube:latest"
+    container_name: sonar-qube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    networks:
+      - sonarqube
+    logging:
+      driver: "none"
+  sonarscan:
+    image: "newtmitch/sonar-scanner"
+    restart: on-failure
+    volumes:
+      - ./sample:/usr/src
+    networks:
+      - sonarqube
+    logging:
+      driver: "none"
+  tensorflow:
+    image: "tensorflow/tensorflow:nightly-jupyter"
+    container_name: tensorflow
+    ports:
+      - "8889:8888"
+    environment:
+      - JUPYTER_TOKEN=test
+    logging:
+      driver: "none"
+  vscode:
+    image: "codercom/code-server"
+    container_name: visual-studio
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - PASSWORD=welcome2vscode
+    logging:
+      driver: "none"
+  orange:
+    image: acopar/orange-docker
+    container_name: orange
+    ports: 
+      - "127.0.0.1:5901:5901"
+      - "127.0.0.1:6901:6901"
+    volumes:
+      - ./orange-profile:/home/orange/.config/biolab.si
+      - ./datasets:/home/orange/datasets
+    logging:
+      driver: "none"
+  spark:
+    image: jupyter/pyspark-notebook
+    container_name: pyspark
+    ports:
+      - "8887:8888"
+    environment:
+      - JUPYTER_TOKEN=test
+    logging:
+      driver: "none"
+  hadoop:
+    image: harisekhon/hadoop
+    container_name: hadoop
+    ports:
+      - "8042:8042"
+      - "8088:8088"
+      - "19888:19888"
+      - "50070:50070"
+      - "50075:50075"
+    logging:
+      driver: "none"
+  
+volumes:
+    orange-profile:
+  
+networks:
+  sonarqube:
